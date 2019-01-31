@@ -44,7 +44,7 @@ int getdistance(int TPin,int EPin)
   digitalWrite(TPin, LOW);
 
   duration = pulseIn(EPin, HIGH);
-  distance = duration*0.034/2;
+  distance = int(duration*0.034)>>1;
   //Serial.println(distance);
   return distance;
 }
@@ -76,7 +76,7 @@ void loop() {
   }
 
   
-  if(EFront > 1 && EBack > 1)
+  if(EFront > 9 && EBack > 9)
   {
     digitalWrite(LEDFront, HIGH);
     digitalWrite(LEDBack, HIGH);
@@ -86,7 +86,7 @@ void loop() {
     Serial.println(disBack);
   }
   else
-  if(EFront > 1)
+  if(EFront > 9)
   {
     digitalWrite(LEDFront, HIGH);
     digitalWrite(LEDBack, LOW);
@@ -95,7 +95,7 @@ void loop() {
     error = true;
   }
   else
-  if(EBack > 1)
+  if(EBack > 9)
   {
     digitalWrite(LEDFront, LOW);
     digitalWrite(LEDBack, HIGH);
