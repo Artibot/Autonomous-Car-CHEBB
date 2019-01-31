@@ -10,11 +10,12 @@ void loop() {
   //btnState = digitalRead(btnPin);
   x = analogRead(X_Pin);
   y = analogRead(Y_Pin);
-  x = x/115;
-  y = y/115;
+  x = -(((x+128)>>7) - 8);
+  y = (y+128)>>7;
+  byte a = x + (y<<4);
   /*Serial.print("x: ");
   Serial.println(x);
-  Serial.print("y: ");
-  Serial.println(y);*/
-  Serial.write(x + y*10);
+  Serial.print("y: ");*/
+  //Serial.println(x);
+  Serial.write(a);
 }

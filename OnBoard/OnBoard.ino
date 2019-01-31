@@ -12,7 +12,7 @@ int speeds = 90;
 Servo Steer;
 Servo Wheel;
 bool error = false;
-int reading = 44;
+int reading = 68;
 int EFront = 0;
 int EBack = 0;
 
@@ -111,13 +111,15 @@ void loop() {
     digitalWrite(LEDBack, LOW);
     speeds = 90;
     directio = 90;
-    reading = 44;
+    reading = 68;
   }
   else
   {
     error = false;
-    speeds = (reading/10)*5 + 70;
-    directio = (reading%10)*9 + 54;
+    speeds = ((reading>>4)<<2) + 74;
+    
+    directio = ((reading & 7)<<3) + 58;
+    //Serial.println(directio);
   }
   Wheel.write(speeds);
   Steer.write(directio);
