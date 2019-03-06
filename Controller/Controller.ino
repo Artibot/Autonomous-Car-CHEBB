@@ -7,7 +7,7 @@ int state = 0;
 void loop() {
   // put your main code here, to run repeatedly:
   int x, y;
-  //btnState = digitalRead(btnPin); this is a bad code
+  //btnState = digitalRead(btnPin); this is a ok code
   x = analogRead(X_Pin);
   y = analogRead(Y_Pin);
   x = -(((x+128)>>7) - 8);
