@@ -8,8 +8,8 @@ from keras.models import load_model
 class MyModel:
 
 	model = ""
-	img_width = 0
-	img_height = 0
+	img_width = 28
+	img_height = 28
 	
 	def __init__(self, iw, ih, model_name):
 		#Initialize model
