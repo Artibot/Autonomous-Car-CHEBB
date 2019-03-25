@@ -2,8 +2,10 @@ import cv2
 import numpy as np
 import time
 from keras.models import load_model
+from keras import backend as k
 import imageCapture as iCap
 import sys
+import config
 
 class MyModel:
 
@@ -13,6 +15,10 @@ class MyModel:
 		self.model = load_model(model_name)
 		self.input_layer_width = iw
 		self.input_layer_height = ih
+		print("Model loaded.")
+	def delModel(self):
+		#k.session_clear()
+		del self.model	
 
 	#Predicts target image and returns either a tensor, or an argmax value of the tensor
 	def predictImage(self, image_feed, returnTensor=True):
@@ -23,30 +29,45 @@ class MyModel:
 		return model_score
 
 	#Calculates fps with a certain image, returns final FPS
-	def calculateFPS(self, im, iters, frameEval):
+	def predictModel(self, im, iters, frameEval):
 		st = time.time()
 		abc, vid = cap.read()
 		vid = np.array(vid)
-		for k in range(1, iters+1):
-			if k % frameEval == 0:
-				abc, vid = cap.read()
-				vid = np.array(vid)
-				pred = self.predictImage(vid, returnTensor=False)
-			if k % 150 == 0:
-				print("FPS:", k / (time.time() - st),
-					  "          \tIteration:", k,
-					  "          \tCurrent prediction:", pred,
-					  "          \tReceived image[", vid.shape[1], "x", vid.shape[0], "]")
-		return iters / (time.time() - st)
+		pred = 0
+		if iters != 0:
+			for k in range(1, iters+1):
+				if k % frameEval == 0:
+					abc, vid = cap.read()
+					vid = np.array(vid)
+					pred = self.predictImage(vid, returnTensor=True)
+				if k % 10 == 0:
+					print("FPS:", k / (time.time() - st),
+						  "          \tIteration:", k,
+						  "          \tCurrent prediction:", pred,
+						  "          \tReceived image[", vid.shape[1], "x", vid.shape[0], "]")
+			return iters / (time.time() - st)
+		else:
+			k = 0
+			while(1):
+				if k % frameEval == 0:
+					abc, vid = cap.read()
+					vid = np.array(vid)
+					pred = self.predictImage(vid, returnTensor=config.CONFIG['print_tensor'])
+				if k % 10 == 0:
+					print("FPS:", k / (time.time() - st),
+						  "          \tIteration:", k,
+						  "          \tCurrent prediction:", pred,
+						  "          \tReceived image[", vid.shape[1], "x", vid.shape[0], "]")
+				k += 1			
 
 	#Returns normalized np array with RGB from image_feed
 	def imgToArray(self, im):
 		#im = cv2.imread(image_feed)
-		if im.shape[0] != 28:
-			if im.shape[1] != 28:
+		if im.shape[0] != self.input_layer_width:
+			if im.shape[1] != self.input_layer_height:
 				im = cv2.resize(im, (self.input_layer_width, self.input_layer_height))
-		#im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-		im = im.astype('float') / 255.0
+		im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
+		im = (im.astype('float') / 127.5) - 1
 		im = np.array(im)
 		im = np.expand_dims(im, axis=0)
 		return im
@@ -56,7 +77,9 @@ class MyModel:
 
 #Model object
 #Loading MyModel object as (layer_input_width, layer_input_height, model_name)
-m1 = MyModel(28, 28, "VGG_MNIST.model")
+
+print("Loading model...\n")
+m1 = MyModel(config.CONFIG['model_width'], config.CONFIG['model_height'], config.CONFIG['model_name'])
 
 
 #Calculating FPS with (image_name, iterations)
@@ -73,7 +96,12 @@ if not cap.isOpened():
 	sys.exit('Failed to open camera!')
 
 abc, vid = cap.read()
-m1.calculateFPS(np.array(vid), 15000, 8)
+
+if config.CONFIG['Show_Cam']:
+    iCap.open_window(args.image_width, args.image_height)
+    iCap.read_cam(cap)
+
+m1.predictModel(np.array(vid), config.CONFIG['iterations'], config.CONFIG['frameskips'])
 
 #print(cv2.imread("13.png").shape)
 
@@ -85,6 +113,7 @@ m1.calculateFPS(np.array(vid), 15000, 8)
 #		print("Iteration: ", i, " is ", val)
 #	i += 1
 
+m1.delModel()
 cap.release()
 
 

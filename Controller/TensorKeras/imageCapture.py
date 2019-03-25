@@ -2,7 +2,10 @@ import argparse
 import cv2
 import numpy as np
 import sys
+import config
 
+
+WINDOW_NAME = 'CameraDemo'
 
 def open_cam_onboard(width, height):
     # On versions of L4T prior to 28.1, add 'flip-method=2' into gst_str
@@ -16,6 +19,43 @@ def open_cam_onboard(width, height):
                'videoconvert ! appsink').format(width, height)
     return cv2.VideoCapture(gst_str, cv2.CAP_GSTREAMER)
 
+def open_window(width, height):
+    cv2.namedWindow(WINDOW_NAME, cv2.WINDOW_NORMAL)
+    cv2.resizeWindow(WINDOW_NAME, width, height)
+    cv2.moveWindow(WINDOW_NAME, 0, 0)
+    cv2.setWindowTitle(WINDOW_NAME, 'Camera Demo for Jetson TX2/TX1')
+
+def read_cam(cap):
+    show_help = True
+    full_scrn = False
+    help_text = '"Esc" to Quit, "H" for Help, "F" to Toggle Fullscreen'
+    font = cv2.FONT_HERSHEY_PLAIN
+    while True:
+        if cv2.getWindowProperty(WINDOW_NAME, 0) < 0:
+            # Check to see if the user has closed the window
+            # If yes, terminate the program
+            break
+        _, img = cap.read() # grab the next image frame from camera
+        if show_help:
+            cv2.putText(img, help_text, (11, 20), font,
+                        1.0, (32, 32, 32), 4, cv2.LINE_AA)
+            cv2.putText(img, help_text, (10, 20), font,
+                        1.0, (240, 240, 240), 1, cv2.LINE_AA)
+        cv2.imshow(WINDOW_NAME, img)
+
+        key = cv2.waitKey(10)
+        if key == 27: # ESC key: quit program
+            break
+        elif key == ord('H') or key == ord('h'): # toggle help message
+            show_help = not show_help
+        elif key == ord('F') or key == ord('f'): # toggle fullscreen
+            full_scrn = not full_scrn
+            if full_scrn:
+                cv2.setWindowProperty(WINDOW_NAME, cv2.WND_PROP_FULLSCREEN,
+                                      cv2.WINDOW_FULLSCREEN)
+            else:
+                cv2.setWindowProperty(WINDOW_NAME, cv2.WND_PROP_FULLSCREEN,
+                                      cv2.WINDOW_NORMAL)
 
 def open_cam_rtsp(uri, width, height, latency):
     gst_str = ('rtspsrc location={} latency={} ! '
@@ -58,9 +98,9 @@ def parse_args():
                         default=1, type=int)
     parser.add_argument('--width', dest='image_width',
                         help='image width [1920]',
-                        default=128, type=int)
+                        default=config.CONFIG['image_width'], type=int)
     parser.add_argument('--height', dest='image_height',
                         help='image height [1080]',
-                        default=128, type=int)
+                        default=config.CONFIG['image_height'], type=int)
     args = parser.parse_args()
     return args
