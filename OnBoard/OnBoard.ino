@@ -26,7 +26,7 @@ void setup() {
   pinMode(LEDFront, OUTPUT);
   pinMode(LEDBack, OUTPUT);
   Serial.begin(9600);
-  Wheel.write(90);
+  Wheel.write(30);
   Steer.write(90);
 }
 
