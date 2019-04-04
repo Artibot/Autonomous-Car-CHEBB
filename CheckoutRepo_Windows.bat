@@ -3,6 +3,6 @@ cd ..
 IF not exist Dependencies (git clone https://github.com/Artibot/Dependencies.git) 
 cd Dependencies 
 git fetch 
-git checkout 53a7ed6d1782c22f18d0e3d387a01b909f2d2971
+git checkout 4abc6d807d59150fff2446dfc4da8535683f8c37
 cd .. 
 cd Autonomous-Car-CHEBB 
