@@ -5,6 +5,6 @@ git clone https://github.com/Artibot/Dependencies.git
 fi
 cd Dependencies
 git fetch
-git checkout 7834e44faa6f1a32b8ca95124d5c91d422797eb4
+git checkout 7721b8642685315d315c69e3a83a1cdbfe5074c4
 cd ..
 cd Autonomous-Car-CHEBB
