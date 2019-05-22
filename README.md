@@ -1,4 +1,4 @@
-# Autonomous Car Using Deep Learning
+#Autonomous Car Using Deep Learning
 
 *Author: Bilgehan Gunaydin, Bozhao Liu, Chrisander Brønstad, Eivind Haldorsen, Huseyin Derbent*
 
@@ -23,6 +23,8 @@ Trainning environment setup
 	...
 	```
 	
+	Reference Website
+	
 On Board Computer (TX2) environment setup
 
 	```
@@ -35,3 +37,7 @@ On Board Computer (TX2) environment setup
 	```
 	Https//
 	```
+	
+#Dependency Repositories
+
+	https://github.com/Artibot/Dependencies
