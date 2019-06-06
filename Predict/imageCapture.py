@@ -11,7 +11,7 @@ def open_cam_onboard(width, height):
     # On versions of L4T prior to 28.1, add 'flip-method=2' into gst_str
     gst_str = ('nvcamerasrc ! '
                'video/x-raw(memory:NVMM), '
-               'width=(int)1920, height=(int)1080, '
+               'width=(int)640, height=(int)480, '
                'format=(string)I420, framerate=(fraction)30/1 ! '
                'nvvidconv ! '
                'video/x-raw, width=(int){}, height=(int){}, '
@@ -95,12 +95,13 @@ def parse_args():
                         action='store_true')
     parser.add_argument('--vid', dest='video_dev',
                         help='device # of USB webcam (/dev/video?) [1]',
-                        default=1, type=int)
+                        default=0, type=int)
     parser.add_argument('--width', dest='image_width',
-                        help='image width [1920]',
-                        default=config.CONFIG['image_width'], type=int)
+                        help='image width [128]',
+                        default=1920, type=int)
     parser.add_argument('--height', dest='image_height',
-                        help='image height [1080]',
-                        default=config.CONFIG['image_height'], type=int)
+                        help='image height [128]',
+                        default=1080, type=int)
     args = parser.parse_args()
     return args
+
